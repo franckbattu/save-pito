@@ -1,21 +1,30 @@
+import models.Spell
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
+import org.apache.spark.rdd.RDD
+
+import scala.collection.mutable.ArrayBuffer
 
 object Main extends App {
 
-  val conf = new SparkConf()
+  val conf: SparkConf = new SparkConf()
     .setAppName("How to save Pito ?")
     .setMaster("local[*]")
 
-  val sparkContext = new SparkContext(conf)
+  val sparkContext: SparkContext = new SparkContext(conf)
   sparkContext.setLogLevel("ERROR")
 
-  val crawler = new Crawler()
-  val spells = crawler.crawl()
+  println("Start crawling spells")
+  val crawler: Crawler = new Crawler()
+  println("End crawling spells")
+  val spells: ArrayBuffer[Spell] = crawler.crawl()
 
-  spells.foreach(spell => println(spell))
+  val rdd: RDD[Spell] = sparkContext.makeRDD(spells)
+  val spellsToSavePito: Array[Spell] = rdd
+    .collect()
+    .filter(spell => spell.level <= 4 && spell.components.length == 1 && spell.components(0) == "V")
 
-
-  // val rdd = sparkContext.makeRDD(spells)
+  println("Spells to save Pito :")
+  spellsToSavePito.foreach(spell => println(spell))
 
 }

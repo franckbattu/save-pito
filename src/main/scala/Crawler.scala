@@ -9,7 +9,7 @@ class Crawler {
 
     var spells = ArrayBuffer[Spell]()
 
-    for (i <- 1 to 100) {
+    for (i <- 1 to 1600) {
       println("Itération " + i)
       val document = Jsoup.connect("http://www.dxcontent.com/SDB_SpellBlock.asp?SDBID=" + i).get()
       val name = document.select(".heading p").text()
