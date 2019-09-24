@@ -15,8 +15,9 @@ class Crawler {
       val name = document.select(".heading p").text()
       val data = document.select(".SPDet")
       val level = this.getLevel(data.get(0).text())
+      val components = this.getComponents(data.get(2).text())
       val resistance = this.getResistance(data.get(data.size() - 1).text())
-      spells += new Spell(name, level, null, resistance)
+      spells += new Spell(name, level, components, resistance)
     }
 
     spells
@@ -24,8 +25,8 @@ class Crawler {
 
   /**
     * Donne le level du wizard s'il est disponible, sinon le premier level trouvé
-    * @param sentence
-    * @return le level correct
+    * @param sentence String
+    * @return Int
     */
   def getLevel(sentence: String): Integer = {
     val levels: String = sentence.split("; ")(1).replace("Level ", "")
@@ -41,8 +42,8 @@ class Crawler {
 
   /**
     * Donne la résistance du wizard
-    * @param sentence
-    * @return true pour une résistance, false sinon
+    * @param sentence String
+    * @return Boolean
     */
   def getResistance(sentence: String): Boolean = {
     val matcher = "(?<=Spell Resistance ).*".r
@@ -50,5 +51,22 @@ class Crawler {
       case Some(value: String) => value.equals("yes")
       case None => false
     }
+  }
+
+  /**
+    * Donne les components de chaque sort
+    * @param sentence String
+    * @return ArrayBuffer[String]
+    */
+  def getComponents(sentence: String): ArrayBuffer[String] = {
+    var result = new ArrayBuffer[String]()
+    val matcher = "[A-Z]+".r
+    for (component <- matcher.findAllIn(sentence)) {
+      if (!component.equals("C")) {
+        result += component
+      }
+    }
+
+    result
   }
 }
