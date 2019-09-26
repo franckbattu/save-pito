@@ -1,7 +1,7 @@
+import db.SQLLite
 import models.Spell
-import org.apache.spark.SparkConf
-import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
+import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -20,11 +20,21 @@ object Main extends App {
   val spells: ArrayBuffer[Spell] = crawler.crawl()
 
   val rdd: RDD[Spell] = sparkContext.makeRDD(spells)
+
   val spellsToSavePito: Array[Spell] = rdd
     .collect()
     .filter(spell => spell.level <= 4 && spell.components.length == 1 && spell.components(0) == "V")
 
-  println("Spells to save Pito :")
-  spellsToSavePito.foreach(spell => println(spell))
+  println("********************************")
+  println("Spells to save Pito with Spark :")
+
+  spellsToSavePito.foreach(spell => println(spell.name))
+
+  println("********************************")
+  println("Spells to save Pito with SQLLite :")
+
+  val db = new SQLLite()
+  db.insertMany(spells)
+  db.savePito()
 
 }
