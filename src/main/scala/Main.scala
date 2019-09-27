@@ -28,6 +28,7 @@ object Main extends App {
   println("********************************")
   println("Spells to save Pito with Spark :")
 
+  println(spellsToSavePito.length)
   spellsToSavePito.foreach(spell => println(spell.name))
 
   println("********************************")

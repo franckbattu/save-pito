@@ -36,7 +36,7 @@ class Crawler {
       data(index + 1).toInt
     }
     else {
-      data(1).charAt(0).asDigit
+      data(1).charAt(0).asDigit // Peut être à remplacer par une valeur supérieure à 4
     }
   }
 
