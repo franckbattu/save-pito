@@ -23,7 +23,7 @@ object Main extends App {
 
   val spellsToSavePito: Array[Spell] = rdd
     .collect()
-    .filter(spell => spell.level <= 4 && spell.components.length == 1 && spell.components(0) == "V")
+    .filter(spell => spell.level.contains("sorcerer/wizard") && spell.level("sorcerer/wizard") <= 4 && spell.components.length == 1 && spell.components(0) == "V")
 
   println("********************************")
   println("Spells to save Pito with Spark :")

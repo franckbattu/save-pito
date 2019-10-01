@@ -42,7 +42,7 @@ class SQLLite {
       val preparedStatement = this.connection.prepareStatement(req)
       preparedStatement.setString(1, spell.name)
       preparedStatement.setString(2, json.toString())
-      preparedStatement.setInt(3, spell.level)
+      preparedStatement.setInt(3, spell.level.getOrElse("sorcerer/wizard", 5))
       preparedStatement.setBoolean(4, spell.resistance)
       preparedStatement.executeUpdate()
     }

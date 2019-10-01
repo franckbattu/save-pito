@@ -1,6 +1,7 @@
 import models.Spell
 import org.jsoup.Jsoup
 
+import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 class Crawler {
@@ -28,16 +29,18 @@ class Crawler {
     * @param sentence String
     * @return Int
     */
-  def getLevel(sentence: String): Integer = {
-    val levels: String = sentence.split("; ")(1).replace("Level ", "")
-    val data: Array[String] = levels.split(" |, ")
-    val index: Int = data.indexOf("sorcerer/wizard")
-    if (index != -1) {
-      data(index + 1).toInt
+  def getLevel(sentence: String): Map[String, Int] = {
+    val properties = sentence.split("; ")
+    val levels = properties(properties.length-1).replace("Level ", "")
+    val result = new mutable.HashMap[String, Int]()
+
+    for(entry <- levels.split(", ")) {
+      val tuple = entry.split(" ")
+      if(tuple.length == 2)
+        result += ((tuple(0), tuple(1).toInt))
     }
-    else {
-      data(1).charAt(0).asDigit // Peut être à remplacer par une valeur supérieure à 4
-    }
+
+    result.toMap
   }
 
   /**
