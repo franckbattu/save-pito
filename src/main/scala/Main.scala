@@ -1,6 +1,7 @@
-import db.SQLLite
 import models.Spell
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.functions.{array_contains, size}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.mutable.ArrayBuffer
@@ -25,17 +26,23 @@ object Main extends App {
     .collect()
     .filter(spell => spell.level.contains("sorcerer/wizard") && spell.level("sorcerer/wizard") <= 4 && spell.components.length == 1 && spell.components(0) == "V")
 
-  println("********************************")
-  println("Spells to save Pito with Spark :")
+  println("*************************************")
+  println(s"Spells to save Pito with Spark : ${spellsToSavePito.length} spells")
 
-  println(spellsToSavePito.length)
   spellsToSavePito.foreach(spell => println(spell.name))
 
-  println("********************************")
-  println("Spells to save Pito with SQLLite :")
+  val spark: SparkSession = SparkSession.builder().getOrCreate()
+  val df: DataFrame = spark.createDataFrame(rdd)
 
-  val db = new SQLLite()
-  db.insertMany(spells)
-  db.savePito()
+  val spellsToSavePito2: Dataset[Row] = df
+    .select("name")
+    .where(array_contains(df("components"), "V"))
+    .where(size(df("components")) === 1)
+    .where(df("level").getItem("sorcerer/wizard") <= 4)
+
+  println("*************************************")
+  println(s"Spells to save Pito with Spark SQL : ${spellsToSavePito2.count()} spells")
+
+  spellsToSavePito2.show()
 
 }
