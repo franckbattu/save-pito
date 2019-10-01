@@ -15,10 +15,11 @@ object Main extends App {
   val sparkContext: SparkContext = new SparkContext(conf)
   sparkContext.setLogLevel("ERROR")
 
-  println("Start crawling spells")
   val crawler: Crawler = new Crawler()
-  println("End crawling spells")
+
+  println("Start crawling spells")
   val spells: ArrayBuffer[Spell] = crawler.crawl()
+  println("End crawling spells")
 
   val rdd: RDD[Spell] = sparkContext.makeRDD(spells)
 
